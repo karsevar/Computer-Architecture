@@ -90,4 +90,44 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        self.trace()
+
+        # specify the instruction variables (initial instructions LDI, HLT, PRN)
+        HLT = 0b00000001 # used to stop the program 
+        LDI = 0b10000010 # used to save a specific value into the register 
+        PRN = 0b01000111 # used to print a specific value in the register 
+
+        # create a while loop that will only terminate once the command 
+        # HLT is read from the ram.
+            # create an instruction variable (since the assumption is the 
+            # first value in the ram is an instruction) initialize it to 
+            # first index in ram.
+
+            # if the command is LDI:
+                # write value in self.ram[self.pc + 2] into self.reg[self.pc + 1]
+                # increment self.pc by three since command was three bytes.
+            # elif command is PRN:
+                # find value in position self.pc + 1 in the register 
+                # print the value as a decimal.
+                # increment self.pc by two since command was two bytes.
+            # elif command is HLT:
+                # terminate the while loop 
+            # else:
+                # print an error message
+        while True:
+            instruction = self.ram[0]
+
+            if instruction == LDI:
+                # self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
+                print('value from ram at pc + 1', self.ram[self.pc + 1])
+                print('value from ram at pc + 2', self.ram[self.pc + 2])
+                self.pc += 3
+            elif instruction == PRN:
+                execute_value = self.reg[self.pc + 1]
+                print(execute_value)
+                self.pc += 2
+            elif instruction == HLT:
+                break 
+            else:
+                print('Invalid Command: please check the IS8 spec.')
+        
+        # self.trace()
