@@ -19,26 +19,39 @@ class CPU:
         # zero
         self.pc = 0
 
-    def load(self):
+    def load(self, file_path):
         """Load a program into memory."""
 
         address = 0
 
         # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
+        with open(file_path, 'r', newline=None) as f:
+            commands = f.readlines()
+            new_commands = []
+            for instruction in commands:
+                # print(instruction.rstrip('\n'))
+                if instruction.startswith('0') or instruction.startswith('1'):
+                    instruction_mod = instruction.split()
+                    new_commands.append(instruction_mod[0])
+
+        # add the new_commands array into the cpu's ram:
+        for address in range(len(new_commands)):
+            value = int(new_commands[address], 2)
+            self.ram_write(value, address)
 
 
     def alu(self, op, reg_a, reg_b):
@@ -130,5 +143,6 @@ class CPU:
                 break 
             else:
                 print('Invalid Command: please check the IS8 spec.')
+                break
         
-        # self.trace()
+        self.trace()
