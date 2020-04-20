@@ -55,6 +55,7 @@ class CPU:
         Handy function to print out the CPU state. You might want to call this
         from run() if you need help debugging.
         """
+        # self.pc = 0
 
         print(f"TRACE: %02X | %02X %02X %02X |" % (
             self.pc,
@@ -114,15 +115,15 @@ class CPU:
             # else:
                 # print an error message
         while True:
-            instruction = self.ram[0]
+            instruction = self.ram[self.pc]
 
             if instruction == LDI:
-                # self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
-                print('value from ram at pc + 1', self.ram[self.pc + 1])
-                print('value from ram at pc + 2', self.ram[self.pc + 2])
+                self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
+                # print('value from ram at pc + 1', self.ram[self.pc + 1])
+                # print('value from ram at pc + 2', self.ram[self.pc + 2])
                 self.pc += 3
             elif instruction == PRN:
-                execute_value = self.reg[self.pc + 1]
+                execute_value = self.reg[self.ram[self.pc + 1]]
                 print(execute_value)
                 self.pc += 2
             elif instruction == HLT:
