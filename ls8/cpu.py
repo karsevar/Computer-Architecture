@@ -90,4 +90,4 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        self.trace()
