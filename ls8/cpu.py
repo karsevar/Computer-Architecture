@@ -59,6 +59,8 @@ class CPU:
 
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
+        elif op == 'MUL':
+            self.reg[reg_a] *= self.reg[reg_b]
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -109,7 +111,7 @@ class CPU:
         HLT = 0b00000001 # used to stop the program 
         LDI = 0b10000010 # used to save a specific value into the register 
         PRN = 0b01000111 # used to print a specific value in the register 
-
+        MUL = 0b10100010 # used to multply two values using the alu.
         # create a while loop that will only terminate once the command 
         # HLT is read from the ram.
             # create an instruction variable (since the assumption is the 
@@ -125,6 +127,11 @@ class CPU:
                 # increment self.pc by two since command was two bytes.
             # elif command is HLT:
                 # terminate the while loop 
+            # elif command is MUL:
+                # call the alu function within the cpu class 
+                # self.alu(instruction, self.reg[self.ram[self.pc+1]], self.reg[self.ram[self.pc+1]])
+                    # pass the alu() method the opcode MUL, and both of the values in the 
+                    # register you would like to multiply
             # else:
                 # print an error message
         while True:
@@ -139,6 +146,9 @@ class CPU:
                 execute_value = self.reg[self.ram[self.pc + 1]]
                 print(execute_value)
                 self.pc += 2
+            elif instruction == MUL:
+                self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
+                self.pc += 3
             elif instruction == HLT:
                 break 
             else:
