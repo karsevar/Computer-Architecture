@@ -194,50 +194,57 @@ class CPU:
                     # register you would like to multiply
             # else:
                 # print an error message
-        while True:
-            instruction = self.ram[self.pc]
+        # while True:
+        #     instruction = self.ram[self.pc]
 
-            if instruction == LDI:
-                self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
-                # print('value from ram at pc + 1', self.ram[self.pc + 1])
-                # print('value from ram at pc + 2', self.ram[self.pc + 2])
-                self.pc += 3
-            elif instruction == PRN:
-                execute_value = self.reg[self.ram[self.pc + 1]]
-                print(execute_value)
-                self.pc += 2
-            elif instruction == MUL:
-                self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
-                self.pc += 3
-            elif instruction == PUSH:
-                # Push the value in the given register on the stack 
-                    # Decrement the sp 
-                    # copy the value in the given register to the address pointed 
-                    # to by stack pointer 
-                self.reg[7] -= 1
-                self.ram[self.reg[7]] = self.reg[self.ram[self.pc + 1]]
-                # print('ram after push', self.ram)
-                self.pc += 2
-            elif instruction == POP:
-                # pop the value at the top of the stack into the given register
-                # check if the pointer is at the end of the stack (position 243)
-                # if not
-                    # copy the value from the address pointed to by stack pointer to the
-                    # given register 
-                    # increment stack pointer 
-                # if so:
-                    # print a message that says stack is empty
-                if self.reg[7] != 243:
-                    stack_head = self.ram[self.reg[7]]
-                    self.reg[self.ram[self.pc + 1]] = stack_head 
-                    self.reg[7] += 1
-                else:
-                    print('~~~~~Stack is empty~~~~~~')
-                self.pc += 2
-            elif instruction == HLT:
-                break 
-            else:
-                print('Invalid Command: please check the IS8 spec.')
+        #     if instruction == LDI:
+        #         self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
+        #         # print('value from ram at pc + 1', self.ram[self.pc + 1])
+        #         # print('value from ram at pc + 2', self.ram[self.pc + 2])
+        #         self.pc += 3
+        #     elif instruction == PRN:
+        #         execute_value = self.reg[self.ram[self.pc + 1]]
+        #         print(execute_value)
+        #         self.pc += 2
+        #     elif instruction == MUL:
+        #         self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
+        #         self.pc += 3
+        #     elif instruction == PUSH:
+        #         # Push the value in the given register on the stack 
+        #             # Decrement the sp 
+        #             # copy the value in the given register to the address pointed 
+        #             # to by stack pointer 
+        #         self.reg[7] -= 1
+        #         self.ram[self.reg[7]] = self.reg[self.ram[self.pc + 1]]
+        #         # print('ram after push', self.ram)
+        #         self.pc += 2
+        #     elif instruction == POP:
+        #         # pop the value at the top of the stack into the given register
+        #         # check if the pointer is at the end of the stack (position 243)
+        #         # if not
+        #             # copy the value from the address pointed to by stack pointer to the
+        #             # given register 
+        #             # increment stack pointer 
+        #         # if so:
+        #             # print a message that says stack is empty
+        #         if self.reg[7] != 243:
+        #             stack_head = self.ram[self.reg[7]]
+        #             self.reg[self.ram[self.pc + 1]] = stack_head 
+        #             self.reg[7] += 1
+        #         else:
+        #             print('~~~~~Stack is empty~~~~~~')
+        #         self.pc += 2
+        #     elif instruction == HLT:
+        #         break 
+        #     else:
+        #         print('Invalid Command: please check the IS8 spec.')
+        #         break
+
+        while True:
+            instruction = self.ram[self.pc] 
+            if instruction == HLT:
                 break
+            else:
+                self.instruction_table[instruction]()
         
         self.trace()
