@@ -28,7 +28,6 @@ class CPU:
 
         ## moving the run instruction logic to the constructor:
         # opicode designations of functionality currently built out.
-        HLT = 0b00000001 # used to stop the program 
         LDI = 0b10000010 # used to save a specific value into the register 
         PRN = 0b01000111 # used to print a specific value in the register 
         MUL = 0b10100010 # used to multply two values using the alu.
@@ -53,7 +52,7 @@ class CPU:
         self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
         # print('value from ram at pc + 1', self.ram[self.pc + 1])
         # print('value from ram at pc + 2', self.ram[self.pc + 2])
-        self.pc += 3
+        # self.pc += 3
 
     def handle_PRN(self):
         # find value in position self.pc + 1 in the register 
@@ -61,7 +60,7 @@ class CPU:
         # increment self.pc by two since command was two bytes.
         execute_value = self.reg[self.ram[self.pc + 1]]
         print(execute_value)
-        self.pc += 2
+        # self.pc += 2
 
     def handle_MUL(self):
         # call the alu function within the cpu class 
@@ -69,7 +68,7 @@ class CPU:
         # pass the alu() method the opcode MUL, and both of the values in the 
         # register you would like to multiply
         self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
-        self.pc += 3
+        # self.pc += 3
 
     def handle_pop(self):
         # pop the value at the top of the stack into the given register
@@ -86,7 +85,7 @@ class CPU:
             self.reg[7] += 1
         else:
             print('~~~~~Stack is empty~~~~~~')
-        self.pc += 2
+        # self.pc += 2
 
     def handle_push(self):
         # Push the value in the given register on the stack 
@@ -96,7 +95,7 @@ class CPU:
         self.reg[7] -= 1
         self.ram[self.reg[7]] = self.reg[self.ram[self.pc + 1]]
         # print('ram after push', self.ram)
-        self.pc += 2
+        # self.pc += 2
 
     def load(self, file_path):
         """Load a program into memory."""
@@ -193,6 +192,8 @@ class CPU:
             # create an instruction variable (since the assumption is the 
             # first value in the ram is an instruction) initialize it to 
             # first index in ram.
+            # create an instruction length variable that will be used to increment 
+            # self.pc according to the first two values in the opcode.
 
             # if instruction is in the dictionary self.instruction_table:
                 # run self.instruction_table[instruction]()
@@ -201,8 +202,11 @@ class CPU:
             # else:
                 # print an error message
 
+            # increment self.pc by instruction length
+
         while True:
             instruction = self.ram[self.pc] 
+            instruction_length = ((instruction & 0b11000000) >> 6) + 1
             if instruction in self.instruction_table:
                 self.instruction_table[instruction]()
             elif instruction == HLT:
@@ -211,5 +215,6 @@ class CPU:
                 print('~~~~~Invalid Instruction~~~~~')
                 break
                 
-        
+            self.pc += instruction_length
+            
         self.trace()
