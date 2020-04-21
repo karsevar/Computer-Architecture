@@ -35,6 +35,7 @@ class CPU:
         PUSH = 0b01000101 # used to push the value at the top of the stack
         CALL = 0b01010000 # used to call subroutine at the address stored in the register
         RET = 0b00010001 # used to return from subroutine
+        ADD = 0b10100000
 
         # initialize the instruction_branch dictionary that will hold all the 
         # opcode functions indexed by the specific opcode.
@@ -47,11 +48,26 @@ class CPU:
         self.instruction_table[MUL] = self.handle_MUL
         self.instruction_table[POP] = self.handle_pop
         self.instruction_table[PUSH] = self.handle_push
+        self.instruction_table[CALL] = self.handle_CALL 
+        self.instruction_table[RET] = self.handle_RET
+        self.instruction_table[ADD] = self.handle_ADD
 
     def handle_CALL(self):
-        pass
+        # first copy the current self.pc memory address and increment it by one address 
+        # store the incremented self.pc address in the stack
 
-    def handle_REL(self):
+        # set the self.pc variable to the address of the subroutine 
+
+        return_address = self.pc + 1 
+
+        # place the return address onto the stack unable to use the handle_push function 
+        self.reg[7] -= 1
+        self.ram[self.reg[7]] = return_address
+
+        # overwrite the self.pc variable to the address of the subroutine:
+        self.pc = self.reg[self.ram[self.pc + 1]]
+
+    def handle_RET(self):
         pass
 
     def handle_LDI(self):
@@ -77,6 +93,9 @@ class CPU:
         # register you would like to multiply
         self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
         # self.pc += 3
+
+    def handle_ADD(self):
+        self.alu('ADD', self.ram[self.pc + 1], self.ram[self.pc + 2])
 
     def handle_pop(self):
         # pop the value at the top of the stack into the given register
@@ -139,6 +158,8 @@ class CPU:
             value = int(new_commands[address], 2)
             self.ram_write(value, address)
 
+        print('program ram', self.ram)
+
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -181,7 +202,7 @@ class CPU:
         # return a message that the insertion was a success
 
         self.ram[address] = value 
-        # print(f'value {value} has been stored at ram position {address}') 
+        print(f'value {value} has been stored at ram position {address}') 
 
     def ram_read(self, address):
         # This function will take in an address (either in binary or 
@@ -195,6 +216,8 @@ class CPU:
 
         # specify the instruction variables (initial instructions LDI, HLT, PRN)
         HLT = 0b00000001 # used to stop the program 
+        CALL = 0b01010000 # used to call subroutine at the address stored in the register
+        RET = 0b00010001 # used to return from subroutine
         # create a while loop that will only terminate once the command 
         # HLT is read from the ram.
             # create an instruction variable (since the assumption is the 
@@ -217,12 +240,19 @@ class CPU:
             instruction_length = ((instruction & 0b11000000) >> 6) + 1
             if instruction in self.instruction_table:
                 self.instruction_table[instruction]()
+                if instruction == CALL:
+                    print('CALL has been called')
+                elif instruction == RET:
+                    print('RET has been called')
+                    break
+                else:
+                    self.pc += instruction_length
+                    
             elif instruction == HLT:
                 break
             else:
-                print('~~~~~Invalid Instruction~~~~~')
+                print(f'~~~~~Invalid Instruction~~~~~ at position {self.pc} {instruction}')
                 break
                 
-            self.pc += instruction_length
 
         self.trace()
