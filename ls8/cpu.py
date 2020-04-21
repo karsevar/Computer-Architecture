@@ -15,6 +15,13 @@ class CPU:
         # that need to be executed for every opcode instruction 
         self.reg = [0] * 8 
 
+        # stack pointer starts at index position 243 of the ram 
+        # pointer saved in reg[7]
+
+        # modify self.reg at position 7 to store the stack pointer 
+        # within self.ram.
+        self.reg[7] = 243
+
         # create a pc counter variable that will be initialized to
         # zero
         self.pc = 0
@@ -112,6 +119,8 @@ class CPU:
         LDI = 0b10000010 # used to save a specific value into the register 
         PRN = 0b01000111 # used to print a specific value in the register 
         MUL = 0b10100010 # used to multply two values using the alu.
+        POP = 0b01000110 # used to pop the value at the top of the stack
+        PUSH = 0b01000101 # used to push the value at the top of the stack
         # create a while loop that will only terminate once the command 
         # HLT is read from the ram.
             # create an instruction variable (since the assumption is the 
@@ -149,6 +158,8 @@ class CPU:
             elif instruction == MUL:
                 self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
                 self.pc += 3
+            elif instruction == PUSH:
+                pass
             elif instruction == HLT:
                 break 
             else:
