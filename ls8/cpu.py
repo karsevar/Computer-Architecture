@@ -102,7 +102,7 @@ class CPU:
         # return a message that the insertion was a success
 
         self.ram[address] = value 
-        print(f'value {value} has been stored at ram position {address}') 
+        # print(f'value {value} has been stored at ram position {address}') 
 
     def ram_read(self, address):
         # This function will take in an address (either in binary or 
@@ -164,8 +164,24 @@ class CPU:
                     # copy the value in the given register to the address pointed 
                     # to by stack pointer 
                 self.reg[7] -= 1
-                self.ram[self.reg[7]] = self.ram[self.pc + 1]
-                print('ram after push', self.ram)
+                self.ram[self.reg[7]] = self.reg[self.ram[self.pc + 1]]
+                # print('ram after push', self.ram)
+                self.pc += 2
+            elif instruction == POP:
+                # pop the value at the top of the stack into the given register
+                # check if the pointer is at the end of the stack (position 243)
+                # if not
+                    # copy the value from the address pointed to by stack pointer to the
+                    # given register 
+                    # increment stack pointer 
+                # if so:
+                    # print a message that says stack is empty
+                if self.reg[7] != 243:
+                    stack_head = self.ram[self.reg[7]]
+                    self.reg[self.ram[self.pc + 1]] = stack_head 
+                    self.reg[7] += 1
+                else:
+                    print('~~~~~Stack is empty~~~~~~')
                 self.pc += 2
             elif instruction == HLT:
                 break 
