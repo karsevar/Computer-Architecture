@@ -33,6 +33,8 @@ class CPU:
         MUL = 0b10100010 # used to multply two values using the alu.
         POP = 0b01000110 # used to pop the value at the top of the stack
         PUSH = 0b01000101 # used to push the value at the top of the stack
+        CALL = 0b01010000 # used to call subroutine at the address stored in the register
+        RET = 0b00010001 # used to return from subroutine
 
         # initialize the instruction_branch dictionary that will hold all the 
         # opcode functions indexed by the specific opcode.
@@ -45,6 +47,12 @@ class CPU:
         self.instruction_table[MUL] = self.handle_MUL
         self.instruction_table[POP] = self.handle_pop
         self.instruction_table[PUSH] = self.handle_push
+
+    def handle_CALL(self):
+        pass
+
+    def handle_REL(self):
+        pass
 
     def handle_LDI(self):
         # write value in self.ram[self.pc + 2] into self.reg[self.pc + 1]
@@ -216,5 +224,5 @@ class CPU:
                 break
                 
             self.pc += instruction_length
-            
+
         self.trace()
