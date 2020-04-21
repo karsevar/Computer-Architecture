@@ -26,6 +26,57 @@ class CPU:
         # zero
         self.pc = 0
 
+        ## moving the run instruction logic to the constructor:
+        # opicode designations of functionality currently built out.
+        HLT = 0b00000001 # used to stop the program 
+        LDI = 0b10000010 # used to save a specific value into the register 
+        PRN = 0b01000111 # used to print a specific value in the register 
+        MUL = 0b10100010 # used to multply two values using the alu.
+        POP = 0b01000110 # used to pop the value at the top of the stack
+        PUSH = 0b01000101 # used to push the value at the top of the stack
+
+        # initialize the instruction_branch dictionary that will hold all the 
+        # opcode functions indexed by the specific opcode.
+        self.instruction_table = {}
+
+        # place the helper methods into the instruction_table using the opcode 
+        # variable values as the keys.
+        self.instruction_table[LDI] = self.handle_LDI
+        self.instruction_table[PRN] = self.handle_PRN
+        self.instruction_table[MUL] = self.handle_MUL
+        self.instruction_table[POP] = self.handle_pop
+        self.instruction_table[PUSH] = self.handle_push
+
+    def handle_LDI(self):
+        self.reg[self.ram[self.pc + 1]] = self.ram[self.pc + 2]
+        # print('value from ram at pc + 1', self.ram[self.pc + 1])
+        # print('value from ram at pc + 2', self.ram[self.pc + 2])
+        self.pc += 3
+
+    def handle_PRN(self):
+        execute_value = self.reg[self.ram[self.pc + 1]]
+        print(execute_value)
+        self.pc += 2
+
+    def handle_MUL(self):
+        self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
+        self.pc += 3
+
+    def handle_pop(self):
+        if self.reg[7] != 243:
+            stack_head = self.ram[self.reg[7]]
+            self.reg[self.ram[self.pc + 1]] = stack_head 
+            self.reg[7] += 1
+        else:
+            print('~~~~~Stack is empty~~~~~~')
+        self.pc += 2
+
+    def handle_push(self):
+        self.reg[7] -= 1
+        self.ram[self.reg[7]] = self.reg[self.ram[self.pc + 1]]
+        # print('ram after push', self.ram)
+        self.pc += 2
+
     def load(self, file_path):
         """Load a program into memory."""
 
