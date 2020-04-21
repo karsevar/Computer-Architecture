@@ -58,7 +58,7 @@ class CPU:
 
         # set the self.pc variable to the address of the subroutine 
 
-        return_address = self.pc + 1 
+        return_address = self.pc + 2
 
         # place the return address onto the stack unable to use the handle_push function 
         self.reg[7] -= 1
@@ -68,7 +68,13 @@ class CPU:
         self.pc = self.reg[self.ram[self.pc + 1]]
 
     def handle_RET(self):
-        pass
+        # pop the address before the subroutine off of the stack 
+        # increment stack pointer 
+        # overwrite self.pc with the address popped off of the stack 
+        stack_head = self.ram[self.reg[7]]
+        self.pc = stack_head 
+        self.reg[7] += 1
+        # print('stack head', stack_head)
 
     def handle_LDI(self):
         # write value in self.ram[self.pc + 2] into self.reg[self.pc + 1]
@@ -158,7 +164,7 @@ class CPU:
             value = int(new_commands[address], 2)
             self.ram_write(value, address)
 
-        print('program ram', self.ram)
+        # print('program ram', self.ram)
 
 
     def alu(self, op, reg_a, reg_b):
@@ -202,7 +208,7 @@ class CPU:
         # return a message that the insertion was a success
 
         self.ram[address] = value 
-        print(f'value {value} has been stored at ram position {address}') 
+        # print(f'value {value} has been stored at ram position {address}') 
 
     def ram_read(self, address):
         # This function will take in an address (either in binary or 
@@ -241,10 +247,11 @@ class CPU:
             if instruction in self.instruction_table:
                 self.instruction_table[instruction]()
                 if instruction == CALL:
-                    print('CALL has been called')
+                    # print('CALL has been called')
+                    continue
                 elif instruction == RET:
-                    print('RET has been called')
-                    break
+                    # print('RET has been called')
+                    continue
                 else:
                     self.pc += instruction_length
                     
