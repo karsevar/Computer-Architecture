@@ -159,7 +159,14 @@ class CPU:
                 self.alu('MUL', self.ram[self.pc + 1], self.ram[self.pc + 2])
                 self.pc += 3
             elif instruction == PUSH:
-                pass
+                # Push the value in the given register on the stack 
+                    # Decrement the sp 
+                    # copy the value in the given register to the address pointed 
+                    # to by stack pointer 
+                self.reg[7] -= 1
+                self.ram[self.reg[7]] = self.ram[self.pc + 1]
+                print('ram after push', self.ram)
+                self.pc += 2
             elif instruction == HLT:
                 break 
             else:
