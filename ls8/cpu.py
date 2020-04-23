@@ -222,8 +222,6 @@ class CPU:
 
         # specify the instruction variables (initial instructions LDI, HLT, PRN)
         HLT = 0b00000001 # used to stop the program 
-        CALL = 0b01010000 # used to call subroutine at the address stored in the register
-        RET = 0b00010001 # used to return from subroutine
         # create a while loop that will only terminate once the command 
         # HLT is read from the ram.
             # create an instruction variable (since the assumption is the 
@@ -255,16 +253,6 @@ class CPU:
                 else:
                     self.instruction_table[instruction]()
                     self.pc += instruction_length
-                # self.instruction_table[instruction]()
-                # if instruction == CALL:
-                #     # print('CALL has been called')
-                #     continue
-                # elif instruction == RET:
-                #     # print('RET has been called')
-                #     continue
-                # else:
-                #     self.pc += instruction_length
-                    
             elif instruction == HLT:
                 break
             else:
