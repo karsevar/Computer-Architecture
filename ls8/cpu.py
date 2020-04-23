@@ -244,16 +244,26 @@ class CPU:
         while True:
             instruction = self.ram[self.pc] 
             instruction_length = ((instruction & 0b11000000) >> 6) + 1
+
+            # obtain incrementation boolean flag from the binary opcode 
+            # 5th place is the incrementation flag 
+            instruction_increment = (instruction & 0b00010000) >> 4
             if instruction in self.instruction_table:
-                self.instruction_table[instruction]()
-                if instruction == CALL:
-                    # print('CALL has been called')
-                    continue
-                elif instruction == RET:
-                    # print('RET has been called')
-                    continue
+
+                if instruction_increment == 0b1:
+                    self.instruction_table[instruction]()
                 else:
+                    self.instruction_table[instruction]()
                     self.pc += instruction_length
+                # self.instruction_table[instruction]()
+                # if instruction == CALL:
+                #     # print('CALL has been called')
+                #     continue
+                # elif instruction == RET:
+                #     # print('RET has been called')
+                #     continue
+                # else:
+                #     self.pc += instruction_length
                     
             elif instruction == HLT:
                 break
